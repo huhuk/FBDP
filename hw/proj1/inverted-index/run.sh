@@ -13,7 +13,10 @@ ${HADOOP_BIN}"hdfs" dfs -rm -r -f  -skipTrash $OUTPUT_PATH
 
 ${HADOOP_BIN}"hadoop" jar $STREAM_JAR_PATH \
     -files ${DATA_PATH}"stopwords.txt#SKIP","map.py","red.py" \
+    -D mapreduce.job.name="inverted-index" \
+    -D mapred.reduce.tasks=2 \
     -D stream.num.map.output.key.fields=2 \
+    -D num.key.fields.for.partition=1 \
     -D mapreduce.partition.keypartitioner.options=-k1 \
     -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
     -input $INPUT_PATH \
