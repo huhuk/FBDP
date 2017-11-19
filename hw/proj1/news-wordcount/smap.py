@@ -3,7 +3,6 @@
 import sys
 from math import log
 
-reducer_num = 4
 base = 200000
 
 for line in sys.stdin:

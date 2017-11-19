@@ -23,7 +23,7 @@ ${HADOOP_BIN}"hadoop" jar $STREAM_JAR_PATH \
     -reducer "python3 filter_word.py ""$*"  \
 
 ${HADOOP_BIN}"hadoop" jar $STREAM_JAR_PATH \
-    -files "./t1map.py","./t1red.py" \
+    -files "./smap.py","./sred.py" \
     -D mapreduce.job.name="wordcount-sort-reducer1" \
     -D stream.num.map.output.key.fields=2 \
     -D mapreduce.partition.keycomparator.options=-k1,2 \
@@ -31,6 +31,6 @@ ${HADOOP_BIN}"hadoop" jar $STREAM_JAR_PATH \
     -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
     -input $OUTPUT_PATH_T \
     -output $OUTPUT_PATH \
-    -mapper "python3 t1map.py" \
-    -reducer "python3 t1red.py" \
+    -mapper "python3 smap.py" \
+    -reducer "python3 sred.py" \
 
