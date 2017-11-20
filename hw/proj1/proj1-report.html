@@ -1449,6 +1449,21 @@ hadoop jar <span class="nv">$STREAM_JAR_PATH</span> <span class="se">\</span>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/wc_out1.png" /></p>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/wc_out2.png" /></p>
 <h3 id="_8"><a name="user-content-_8" href="#_8" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>性能扩展性评估</h3>
+<ol>
+<li>
+<p>扩展性不足之处</p>
+<p>输入文件太多(这里有3000+个文件), input split过多, 需要的mapper就很多, 执行非常慢, 只能提前把数据集先进行合并(小文件合并为大文件), </p>
+</li>
+<li>
+<p>扩展性亮点</p>
+<p>func函数对Integer的处理</p>
+</li>
+<li>
+<p>性能评估</p>
+<p>单reducer和多reducer的性能比较<br />
+通过算法提升性能的空间已经不大了</p>
+</li>
+</ol>
 <h2 id="2"><a name="user-content-2" href="#2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>需求2</h2>
 <p>针对股票新闻数据集，以新闻标题中的词组为key，编写带URL属性的文档倒排索引程序，将结果输出到指定文件。</p>
 <p>(因为HDFS并不适合存储大量小文件，而且处理效率很低，所以处理合并文件fulldata.txt)</p>
@@ -1537,4 +1552,21 @@ output format: (term:docid#payload,docid#payload...)
 <h3 id="_12"><a name="user-content-_12" href="#_12" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>运行结果展示</h3>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/ii_out1.png" /></p>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/ii_out2.png" /></p>
-<h3 id="_13"><a name="user-content-_13" href="#_13" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>性能扩展性评估</h3></article></body></html>
+<h3 id="_13"><a name="user-content-_13" href="#_13" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>性能扩展性评估</h3>
+<ol>
+<li>
+<p>一个思考</p>
+<p>原始数据大约20M, 生成的倒排索引文件大约103M, 空间大了非常多</p>
+<p>原因是: </p>
+<div class="codehilite"><pre>(1) 原来一句话对应一个url, 现在一句话的每一个词语都要对应这个url, 空间开销大了很多; 
+(2) 存放了很多docid, 其实在这个应用中docid没有实际意义, 主要是为了编程练习
+</pre></div>
+
+
+<p>考虑的解决方案</p>
+<div class="codehilite"><pre>(1) 增加完善停词表: 目前结果中有很多词语没有意义, 可以过滤
+</pre></div>
+
+
+</li>
+</ol></article></body></html>
