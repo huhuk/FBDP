@@ -8,6 +8,7 @@
 
 针对股票新闻数据集中的新闻标题，编写WordCount程序，统计所有除Stop-word（如“的”，“得”，“在”等）出现次数k次以上的单词计数，最后的结果按照词频从高到低排序输出。
 
+---
 ### 设计思路
 
 ##### first mapreduce job: 过滤停词 -> 统计词频 -> 过滤小于k次的单词
@@ -32,7 +33,7 @@
         input format:  <word, local-count>
         output format: <word, global-count>
 
-##### second mapreduce job: 排序: 按**词频倒序**, 词频相同按**词语字典顺序**
+##### second mapreduce job: 全局排序: 按**词频倒序**, 词频相同按**词语字典顺序**
 
     map:
         input format:  <word, count>
@@ -80,7 +81,10 @@
 
 这种算法的泛化性非常强，可以完美解决这个问题！
 
+---
 ### 实现细节
+
+#### 词频统计
 
 ##### \* 提取文本(新闻标题)
 
@@ -142,9 +146,16 @@ text = "some text"
 jieba.cut(text)
 ```
 
-##### 词频统计
+##### 参数-k
 
-map.py
+    这个实现很简单
+    (1)在wordcount的reducer中只输出value大于等于k的<key, value>对 (38 + 30 sec)
+    (2)在sort的mapper中只处理value大于等于k的<key, value>对 (39 + 32 sec)
+    比较两种计算时间 -k 100 还是相差不大 
+
+但第一种方法网络传输开销小很多! 这里展示第一种实现的代码。
+
+##### mapper
 
 ```python3
 import sys
@@ -152,7 +163,7 @@ import jieba
 
 stop_words = set()
 
-def generateLongCountToken(item):
+def emit(item):
     print(item + "\t" + "1")
 
 def stop_file(filename):
@@ -164,7 +175,7 @@ def stop_file(filename):
 
 def solve_stop(word):
     if word not in stop_words and not word.isspace():
-        generateLongCountToken(word)
+        emit(word)
 
 def main(argv):
     for line in sys.stdin:
@@ -178,7 +189,7 @@ if __name__ == '__main__':
     main(sys.argv)
 ```
 
-combiner.py
+##### combiner
 
 ```python3
 import sys
@@ -199,11 +210,9 @@ if old_values:
     print('\t'.join([old_key, str(old_values)]))
 ```
 
-red.py
+##### reducer
 
 ```python3
-#!/usr/bin/python3
-
 import sys
 
 k = 0
@@ -228,7 +237,7 @@ if old_values and old_values > k:
 
 ```
 
-##### 全局排序
+#### 全局排序
 
 实现了两个版本：单reducer(22sec) 和 多reducers(38sec)
 
@@ -238,7 +247,7 @@ if old_values and old_values > k:
             好处是并行处理
 但是运行发现**当前数据规模**单reduer运行更快
 
-###### 单reducer版本
+##### 单reducer + func-Key转换 版本
 
 map.py
 ```python3
@@ -258,7 +267,7 @@ for line in sys.stdin:
     print('\t'.join([ str(new_k), val ]))
 ```
 
-###### 多reducers + local-sort版本
+##### 多reducer + local-sort 版本
 
 map.py
 ```python3
@@ -288,15 +297,7 @@ for i in ol:
     print('%s\t%s'%(o, i))
 ```
 
-##### 参数-k
-
-    这个实现很简单
-    (1)在wordcount的reducer中只输出value大于等于k的<key, value>对 (38 + 30 sec)
-    (2)在sort的mapper中只处理value大于等于k的<key, value>对 (39 + 32 sec)
-    比较两种计算时间 -k 100 还是相差不大 
-
-但第一种方法网络传输开销小很多!
-
+---
 ### 程序运行说明
 
 run.sh
@@ -327,12 +328,14 @@ hadoop jar $STREAM_JAR_PATH \
 
 ./run.sh \[ -k \] \[ Integer \]
 
+---
 ### 运行结果展示
 
 ![](./img/wc_out1.png)
 
 ![](./img/wc_out2.png)
 
+---
 ### 性能扩展性评估
 
 1. 扩展性不足之处
@@ -348,6 +351,7 @@ hadoop jar $STREAM_JAR_PATH \
     单reducer和多reducer的性能比较
     通过算法提升性能的空间已经不大了
 
+---
 ## 需求2
 
 针对股票新闻数据集，以新闻标题中的词组为key，编写带URL属性的文档倒排索引程序，将结果输出到指定文件。
@@ -356,6 +360,7 @@ hadoop jar $STREAM_JAR_PATH \
 
 文档名: 股票代码+股票名称.txt
 
+---
 ### 设计思路
 
 ##### mapper
@@ -378,6 +383,7 @@ hadoop jar $STREAM_JAR_PATH \
     所有行按term排序，每一行内按docid排序
     (如果我们需要payload也是排序的, 只要 set key: < term, docid, payload >)
 
+---
 ### 实现细节
 
 ##### mapper
@@ -419,12 +425,13 @@ for line in sys.stdin:
         print(',' + value, end = '')
 ```
 
-##### \* reducer 数量
+##### reducer 数量
 
 在上传到github上时，因为输出文件大于100M，上传被拒绝
 
 设置reducer的数量为两个，成功上传！(虽然警告超过了建议的大小50M)
 
+---
 ### 程序运行说明
 
 run.sh: 
@@ -448,12 +455,14 @@ hadoop jar $STREAM_JAR_PATH \
 
 ./run.sh
 
+---
 ### 运行结果展示
 
 ![](./img/ii_out1.png)
 
 ![](./img/ii_out2.png)
 
+---
 ### 性能扩展性评估
 
 1. 一个思考

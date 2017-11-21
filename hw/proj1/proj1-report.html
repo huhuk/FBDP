@@ -1109,24 +1109,29 @@ MathJax.Hub.Config({
 <li><a href="#1">需求1</a><ul>
 <li><a href="#_1">设计思路</a><ul>
 <li><a href="#first-mapreduce-job-k">first mapreduce job: 过滤停词 -&gt; 统计词频 -&gt; 过滤小于k次的单词</a></li>
-<li><a href="#second-mapreduce-job">second mapreduce job: 排序: 按词频倒序, 词频相同按词语字典顺序</a></li>
+<li><a href="#second-mapreduce-job">second mapreduce job: 全局排序: 按词频倒序, 词频相同按词语字典顺序</a></li>
 <li><a href="#42-func">* func 函数 ！</a></li>
 </ul>
 </li>
 <li><a href="#_2">实现细节</a><ul>
+<li><a href="#_3">词频统计</a><ul>
 <li><a href="#42">* 提取文本(新闻标题)</a><ul>
 <li><a href="#42_1">* 自我校验</a></li>
 <li><a href="#42_2">* 数据集问题</a></li>
 </ul>
 </li>
-<li><a href="#_3">中文分词</a></li>
-<li><a href="#_4">词频统计</a></li>
-<li><a href="#_5">全局排序</a><ul>
-<li><a href="#reducer">单reducer版本</a></li>
-<li><a href="#reducers-local-sort">多reducers + local-sort版本</a></li>
+<li><a href="#_4">中文分词</a></li>
+<li><a href="#-k">参数-k</a></li>
+<li><a href="#mapper">mapper</a></li>
+<li><a href="#combiner">combiner</a></li>
+<li><a href="#reducer">reducer</a></li>
 </ul>
 </li>
-<li><a href="#-k">参数-k</a></li>
+<li><a href="#_5">全局排序</a><ul>
+<li><a href="#reducer-func-key">单reducer + func-Key转换 版本</a></li>
+<li><a href="#reducer-local-sort">多reducer + local-sort 版本</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_6">程序运行说明</a></li>
@@ -1136,14 +1141,14 @@ MathJax.Hub.Config({
 </li>
 <li><a href="#2">需求2</a><ul>
 <li><a href="#_9">设计思路</a><ul>
-<li><a href="#mapper">mapper</a></li>
+<li><a href="#mapper_1">mapper</a></li>
 <li><a href="#reducer_1">reducer</a></li>
 </ul>
 </li>
 <li><a href="#_10">实现细节</a><ul>
-<li><a href="#mapper_1">mapper</a></li>
+<li><a href="#mapper_2">mapper</a></li>
 <li><a href="#reducer_2">reducer</a></li>
-<li><a href="#42-reducer">* reducer 数量</a></li>
+<li><a href="#reducer_3">reducer 数量</a></li>
 </ul>
 </li>
 <li><a href="#_11">程序运行说明</a></li>
@@ -1159,6 +1164,7 @@ MathJax.Hub.Config({
 <p>@author huhu</p>
 <h2 id="1"><a name="user-content-1" href="#1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>需求1</h2>
 <p>针对股票新闻数据集中的新闻标题，编写WordCount程序，统计所有除Stop-word（如“的”，“得”，“在”等）出现次数k次以上的单词计数，最后的结果按照词频从高到低排序输出。</p>
+<hr />
 <h3 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>设计思路</h3>
 <h5 id="first-mapreduce-job-k"><a name="user-content-first-mapreduce-job-k" href="#first-mapreduce-job-k" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>first mapreduce job: 过滤停词 -&gt; 统计词频 -&gt; 过滤小于k次的单词</h5>
 <div class="codehilite"><pre><span class="n">mapper</span><span class="o">:</span>
@@ -1183,7 +1189,7 @@ MathJax.Hub.Config({
 </pre></div>
 
 
-<h5 id="second-mapreduce-job"><a name="user-content-second-mapreduce-job" href="#second-mapreduce-job" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>second mapreduce job: 排序: 按<strong>词频倒序</strong>, 词频相同按<strong>词语字典顺序</strong></h5>
+<h5 id="second-mapreduce-job"><a name="user-content-second-mapreduce-job" href="#second-mapreduce-job" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>second mapreduce job: 全局排序: 按<strong>词频倒序</strong>, 词频相同按<strong>词语字典顺序</strong></h5>
 <div class="codehilite"><pre><span class="n">map</span><span class="o">:</span>
     <span class="n">input</span> <span class="n">format</span><span class="o">:</span>  <span class="o">&lt;</span><span class="n">word</span><span class="o">,</span> <span class="n">count</span><span class="o">&gt;</span>
     <span class="n">output</span> <span class="n">format</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">func</span><span class="o">(</span><span class="n">count</span><span class="o">),</span> <span class="n">word</span><span class="o">&gt;</span>
@@ -1230,7 +1236,9 @@ MathJax.Hub.Config({
 <p>总结一下： <br />
 先用一个大数减去count，实现数字级别的倒序; 再用一个大数加上它，实现字符串级别的倒序</p>
 <p>这种算法的泛化性非常强，可以完美解决这个问题！</p>
+<hr />
 <h3 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>实现细节</h3>
+<h4 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>词频统计</h4>
 <h5 id="42"><a name="user-content-42" href="#42" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>* 提取文本(新闻标题)</h5>
 <h6 id="42_1"><a name="user-content-42_1" href="#42_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>* 自我校验</h6>
 <p>分析数据集每行的pattern，使用三种不同的提取新闻标题文本的方法，三种方法<strong>互相检验正确性</strong></p>
@@ -1264,7 +1272,7 @@ MathJax.Hub.Config({
 <p>fulldata.txt</p>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/data_error3.png" /></p>
 <p>数据集中有<strong>奇怪的字符^M^M</strong> 在解析的时候变成了两个换行！修改数据即可！</p>
-<h5 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>中文分词</h5>
+<h5 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>中文分词</h5>
 <div class="codehilite"><pre>python 结巴中文分词包
 </pre></div>
 
@@ -1275,14 +1283,22 @@ MathJax.Hub.Config({
 </pre></div>
 
 
-<h5 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>词频统计</h5>
-<p>map.py</p>
+<h5 id="-k"><a name="user-content--k" href="#-k" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>参数-k</h5>
+<div class="codehilite"><pre>这个实现很简单
+(1)在wordcount的reducer中只输出value大于等于k的&lt;key, value&gt;对 (38 + 30 sec)
+(2)在sort的mapper中只处理value大于等于k的&lt;key, value&gt;对 (39 + 32 sec)
+比较两种计算时间 -k 100 还是相差不大
+</pre></div>
+
+
+<p>但第一种方法网络传输开销小很多! 这里展示第一种实现的代码。</p>
+<h5 id="mapper"><a name="user-content-mapper" href="#mapper" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>mapper</h5>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">jieba</span>
 
 <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">generateLongCountToken</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot;1&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">stop_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
@@ -1294,7 +1310,7 @@ MathJax.Hub.Config({
 
 <span class="k">def</span> <span class="nf">solve_stop</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">word</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
-        <span class="n">generateLongCountToken</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">emit</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
@@ -1309,7 +1325,7 @@ MathJax.Hub.Config({
 </pre></div>
 
 
-<p>combiner.py</p>
+<h5 id="combiner"><a name="user-content-combiner" href="#combiner" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>combiner</h5>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">old_key</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1329,10 +1345,8 @@ MathJax.Hub.Config({
 </pre></div>
 
 
-<p>red.py</p>
-<div class="codehilite"><pre><span class="ch">#!/usr/bin/python3</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
+<h5 id="reducer"><a name="user-content-reducer" href="#reducer" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>reducer</h5>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;-k&#39;</span><span class="p">:</span>
@@ -1356,7 +1370,7 @@ MathJax.Hub.Config({
 </pre></div>
 
 
-<h5 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>全局排序</h5>
+<h4 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>全局排序</h4>
 <p>实现了两个版本：单reducer(22sec) 和 多reducers(38sec)</p>
 <div class="codehilite"><pre>    单reducer: 不需要处理 自动全局排序
     多reducer实现：
@@ -1366,7 +1380,7 @@ MathJax.Hub.Config({
 
 
 <p>但是运行发现<strong>当前数据规模</strong>单reduer运行更快</p>
-<h6 id="reducer"><a name="user-content-reducer" href="#reducer" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>单reducer版本</h6>
+<h5 id="reducer-func-key"><a name="user-content-reducer-func-key" href="#reducer-func-key" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>单reducer + func-Key转换 版本</h5>
 <p>map.py<br />
 <div class="codehilite"><pre><span class="n">base</span> <span class="o">=</span> <span class="mi">200000</span>
 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
@@ -1383,7 +1397,7 @@ MathJax.Hub.Config({
     <span class="nb">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_k</span><span class="p">),</span> <span class="n">val</span> <span class="p">]))</span>
 </pre></div>
 </p>
-<h6 id="reducers-local-sort"><a name="user-content-reducers-local-sort" href="#reducers-local-sort" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>多reducers + local-sort版本</h6>
+<h5 id="reducer-local-sort"><a name="user-content-reducer-local-sort" href="#reducer-local-sort" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>多reducer + local-sort 版本</h5>
 <p>map.py<br />
 <div class="codehilite"><pre><span class="n">reducer_num</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
@@ -1410,15 +1424,7 @@ MathJax.Hub.Config({
     <span class="nb">print</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="se">\t</span><span class="si">%s</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
 </pre></div>
 </p>
-<h5 id="-k"><a name="user-content--k" href="#-k" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>参数-k</h5>
-<div class="codehilite"><pre>这个实现很简单
-(1)在wordcount的reducer中只输出value大于等于k的&lt;key, value&gt;对 (38 + 30 sec)
-(2)在sort的mapper中只处理value大于等于k的&lt;key, value&gt;对 (39 + 32 sec)
-比较两种计算时间 -k 100 还是相差不大
-</pre></div>
-
-
-<p>但第一种方法网络传输开销小很多!</p>
+<hr />
 <h3 id="_6"><a name="user-content-_6" href="#_6" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>程序运行说明</h3>
 <p>run.sh<br />
 <div class="codehilite"><pre>hadoop jar <span class="nv">$STREAM_JAR_PATH</span> <span class="se">\</span>
@@ -1445,9 +1451,11 @@ hadoop jar <span class="nv">$STREAM_JAR_PATH</span> <span class="se">\</span>
 </p>
 <p>运行命令</p>
 <p>./run.sh [ -k ] [ Integer ]</p>
+<hr />
 <h3 id="_7"><a name="user-content-_7" href="#_7" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>运行结果展示</h3>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/wc_out1.png" /></p>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/wc_out2.png" /></p>
+<hr />
 <h3 id="_8"><a name="user-content-_8" href="#_8" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>性能扩展性评估</h3>
 <ol>
 <li>
@@ -1464,12 +1472,14 @@ hadoop jar <span class="nv">$STREAM_JAR_PATH</span> <span class="se">\</span>
 通过算法提升性能的空间已经不大了</p>
 </li>
 </ol>
+<hr />
 <h2 id="2"><a name="user-content-2" href="#2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>需求2</h2>
 <p>针对股票新闻数据集，以新闻标题中的词组为key，编写带URL属性的文档倒排索引程序，将结果输出到指定文件。</p>
 <p>(因为HDFS并不适合存储大量小文件，而且处理效率很低，所以处理合并文件fulldata.txt)</p>
 <p>文档名: 股票代码+股票名称.txt</p>
+<hr />
 <h3 id="_9"><a name="user-content-_9" href="#_9" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>设计思路</h3>
-<h5 id="mapper"><a name="user-content-mapper" href="#mapper" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>mapper</h5>
+<h5 id="mapper_1"><a name="user-content-mapper_1" href="#mapper_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>mapper</h5>
 <div class="codehilite"><pre>每一行，我们可以得到这些信息: code name date time news-title URL
 
 对新闻标题进行中文分词 并且 对词语去重 -&gt; every term
@@ -1491,8 +1501,9 @@ output format: (term:docid#payload,docid#payload...)
 </pre></div>
 
 
+<hr />
 <h3 id="_10"><a name="user-content-_10" href="#_10" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>实现细节</h3>
-<h5 id="mapper_1"><a name="user-content-mapper_1" href="#mapper_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>mapper</h5>
+<h5 id="mapper_2"><a name="user-content-mapper_2" href="#mapper_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>mapper</h5>
 <p>和上一个任务几乎完全一样</p>
 <p>展示部分核心代码 map.py<br />
 <div class="codehilite"><pre><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
@@ -1527,9 +1538,10 @@ output format: (term:docid#payload,docid#payload...)
         <span class="nb">print</span><span class="p">(</span><span class="s">&#39;,&#39;</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 </p>
-<h5 id="42-reducer"><a name="user-content-42-reducer" href="#42-reducer" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>* reducer 数量</h5>
+<h5 id="reducer_3"><a name="user-content-reducer_3" href="#reducer_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>reducer 数量</h5>
 <p>在上传到github上时，因为输出文件大于100M，上传被拒绝</p>
 <p>设置reducer的数量为两个，成功上传！(虽然警告超过了建议的大小50M)</p>
+<hr />
 <h3 id="_11"><a name="user-content-_11" href="#_11" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>程序运行说明</h3>
 <p>run.sh: </p>
 <div class="codehilite"><pre>hadoop jar <span class="nv">$STREAM_JAR_PATH</span> <span class="se">\</span>
@@ -1549,9 +1561,11 @@ output format: (term:docid#payload,docid#payload...)
 
 <p>运行命令</p>
 <p>./run.sh</p>
+<hr />
 <h3 id="_12"><a name="user-content-_12" href="#_12" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>运行结果展示</h3>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/ii_out1.png" /></p>
 <p><img alt="" src="///D://1/major/FBDP/FBDP/hw/proj1/img/ii_out2.png" /></p>
+<hr />
 <h3 id="_13"><a name="user-content-_13" href="#_13" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>性能扩展性评估</h3>
 <ol>
 <li>
