@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2010 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Original slides: Marcin Wichary (mwichary@google.com)
+  Modifications: Ernest Delgado (ernestd@google.com)
+                 Alex Russell (slightlyoff@chromium.org)
+
+  landslide modifications: Adam Zapletal (adamzap@gmail.com)
+                           Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Project 1</title>
+    <!-- Styles -->
+    
+    <link rel="stylesheet" media="print" href="file://d:\py_env\ppt\lib\site-packages\landslide\themes\default\css\print.css">
+    <link rel="stylesheet" media="screen, projection" href="file://d:\py_env\ppt\lib\site-packages\landslide\themes\default\css\screen.css">
+    
+    
+    <!-- /Styles -->
+    <!-- Javascripts -->
+    
+    <script type="text/javascript" src="file://d:\py_env\ppt\lib\site-packages\landslide\themes\default\js\slides.js"></script>
+    
+    
+    
+    <!-- /Javascripts -->
+</head>
+<body>
+  <div id="blank"></div>
+  <div class="presentation">
+    <div id="current_presenter_notes">
+      <div id="presenter_note"></div>
+    </div>
+    <div class="slides">
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-1">
+          <div class="inner">
+            
+            <header><h1>Project 1</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              1/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-2">
+          <div class="inner">
+            
+            <header><h1>@Author: huhu</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              2/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-3">
+          <div class="inner">
+            
+            <header><h2>需求1</h2></header>
+            
+            
+            <section><blockquote>
+<p>针对股票新闻数据集中的新闻标题，编写WordCount程序，统计所有除Stop-word（如“的”，“得”，“在”等）出现次数k次以上的单词计数，最后的结果按照词频从高到低排序输出。</p>
+</blockquote></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              3/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-4">
+          <div class="inner">
+            
+            <header><h1>1.1 设计思路</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              4/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-5">
+          <div class="inner">
+            
+            <header><h2>1.1.1 first job:</h2></header>
+            
+            
+            <section><p>过滤停词 -&gt; 统计词频 -&gt; 过滤小于k次的单词(reducer)</p>
+<p>(大同小异, 主要是 <strong>使用了combiner</strong>, <strong>在reducer实现过滤k</strong></p>
+<p>mapper:</p>
+<pre><code>初始化: 获取所有停词(stop-words)
+对每一行处理: 
+    获取新闻标题 -&gt; 对标题分词 -&gt; 对每一个单词:
+        如果 单词合法(不是停词、不是空白字符、……) 那么 emit &lt;word, 1&gt;
+</code></pre>
+<p><strong>combiner</strong>:</p>
+<pre><code>同一个word的次数加在一起 (对同一个Key的Value求和)
+input format:   &lt;word, 1&gt;
+output format:  &lt;word, local-count&gt;
+</code></pre>
+<p>reducer: (like the combiner)</p>
+<pre><code>同一个word的次数加在一起
+如果 总次数 &gt;= k 则 emit &lt;word, global-count&gt;
+input format:  &lt;word, local-count&gt;
+output format: &lt;word, global-count&gt;
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              5/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-6">
+          <div class="inner">
+            
+            <header><h2>1.1.2 second job:</h2></header>
+            
+            
+            <section><p>全局排序: 按<strong>词频倒序</strong>, 词频相同时按<strong>单词的字典顺序</strong></p>
+<pre><code>map:
+    input format:  &lt;word, count&gt;
+    output format: &lt;func(count), word&gt;
+
+reducer.num:1    (全排序) (也实现了多reducer的全排序版本)    
+key.filed.num:2  (二级排序)
+
+reduce:
+    input format:  &lt;new_count, word&gt; 
+    output format: &lt;func^(-1)(new_count), word&gt;
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              6/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-7">
+          <div class="inner">
+            
+            <header><h2>1.1.3 * func 函数 ！</h2></header>
+            
+            
+            <section><p>Key有两个字段，默认排序是:</p>
+<pre><code>先比较 Key的第一个字段 字典序较小的优先
+再比较 Key的第二个字段 字典序较小的优先
+</code></pre>
+<p>但是词频是数字类型, 直接按字典序排序时会出现问题:</p>
+<pre><code>1比2优先   10比2优先
+</code></pre>
+<p>所以对词频进行一个转换</p>
+<pre><code>(1) x加上一个大数 -&gt; 实现数字类型按字典序排序时顺序不变
+    f(x) = 10000 + x  
+    1 &lt; 2 &lt; 10 -&gt; '10001' &lt; '10002' &lt; '10010'
+(2) 一个大数减去x -&gt; 实现数字类型的倒序排列
+    g(x) = 10000 - x
+    1 &lt; 2 &lt; 10 -&gt; 9999 &gt; 9998 &gt; 9990
+(3) 把(1)(2)组合
+    h(x) = f(g(x)) = 10000 + (10000 - x) = 20000 - x
+    1 &lt; 2 &lt; 10 -&gt; '19999' &gt; '19998' &gt; '19990'
+    此时 10 排在 2 前，2 排在 1 前 !
+
+(这个大数要大于最大的词频，使用 100000 即可)
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              7/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-8">
+          <div class="inner">
+            
+            <header><h1>1.2 细节与问题</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              8/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code slide-9">
+          <div class="inner">
+            
+            <header><h1>1.2.1 词频统计 —— 提取文本: 新闻标题</h1></header>
+            
+            
+            <section><h2>(1) 自我校验</h2>
+<p>分析数据集每行的pattern，使用三种不同的提取新闻标题文本的方法，三种方法<strong>互相检验正确性</strong></p>
+<p>(1)空白字符作为分隔符 + 选择第四个元素到倒数第二个元素的所有部分</p>
+<div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="n">news_title</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+<p>(2)冒号作为分隔符 + 选择第二个元素到倒数第二个元素的所有部分</p>
+<div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="n">news_title</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+<p>(3)正则表达式匹配: r'\d\d:\d\d(.*?)http://'</p>
+<div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="n">news_title</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">patterns</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+<p>三种不同方式的提取结果，检验提取的新闻标题是否有有错误，是否提取完全</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              9/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code slide-10">
+          <div class="inner">
+            
+            <header><h1>1.2.1 词频统计 —— 提取文本: 新闻标题</h1></header>
+            
+            
+            <section><h2>(2) 数据集问题</h2>
+<p>这里发现了 fulldata.txt <strong> 数据的问题！ </strong></p>
+<p>(1) 一开始我发现数据行数不一样，很奇怪，但是没有深究，也没有办法深究</p>
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/wc_err.png" /></p>
+<p>(2) 运行中出现问题，写了一个脚本(wc.py) 找出 小于6个item 的行</p>
+<div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">):</span>
+<span class="lineno">2 </span>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+<span class="lineno">3 </span>        <span class="k">print</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)),</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+</pre></div>
+
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/data_error2.png" /></p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              10/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-11">
+          <div class="inner">
+            
+            <header><h1>1.2.1 词频统计 —— 提取文本: 新闻标题</h1></header>
+            
+            
+            <section><h2>(2) 数据集问题</h2>
+<p>(3) 定位文件</p>
+<p>shock/sz000848.txt</p>
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/data_error1.png" /></p>
+<p>fulldata.txt</p>
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/data_error3.png" /></p>
+<p>数据集中有<strong>奇怪的字符^M^M</strong> 在解析的时候变成了两个换行！修改数据即可！</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              11/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code slide-12">
+          <div class="inner">
+            
+            <header><h1>1.2.2 中文分词</h1></header>
+            
+            
+            <section><p>python 结巴中文分词包</p>
+<div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="kn">import</span> <span class="nn">jieba</span>
+<span class="lineno">2 </span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;some text&quot;</span>
+<span class="lineno">3 </span><span class="n">jieba</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              12/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-13">
+          <div class="inner">
+            
+            <header><h1>1.2.3 参数-k</h1></header>
+            
+            
+            <section><p>这个实现很简单, 有两种方法</p>
+<ul>
+<li>(1)在wordcount的reducer中只输出value大于等于k的<key, value>对 (38 + 30 sec)</li>
+<li>(2)在sort的mapper中只处理value大于等于k的<key, value>对 (39 + 32 sec)</li>
+</ul>
+<p>比较两种计算时间 (k = 100) 还是相差不大</p>
+<p>但第一种方法网络传输开销小很多! 这里展示第一种实现的代码。</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              13/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-14">
+          <div class="inner">
+            
+            <header><h1>1.2.4 全局排序</h1></header>
+            
+            
+            <section><p>实现了两个版本：单reducer(22sec) 和 多reducers(38sec)</p>
+<ul>
+<li>
+<p>单reducer: </p>
+<ul>
+<li>不需要处理 自动全局排序</li>
+</ul>
+</li>
+<li>
+<p>多reducer实现：</p>
+<ul>
+<li>需要手动按大小分桶</li>
+<li>好处是并行处理</li>
+</ul>
+</li>
+</ul>
+<p>但是运行发现 <strong>当前数据规模</strong> 单reduer运行更快</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              14/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code slide-15">
+          <div class="inner">
+            
+            <header><h2>1.3 运行命令</h2></header>
+            
+            
+            <section><div class="highlight"><pre><span></span><span class="lineno">1 </span><span class="c1"># ./run.sh \[ -k \] \[ Integer \]</span>
+<span class="lineno">2 </span>
+<span class="lineno">3 </span>./run.sh -k <span class="m">100</span>
+</pre></div>
+</section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              15/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-16">
+          <div class="inner">
+            
+            <header><h2>1.4 运行结果展示</h2></header>
+            
+            
+            <section><p><img alt="" src="file://D:\py_env\ppt\input\./img/wc_out1.png" /></p>
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/wc_out2.png" /></p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              16/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-17">
+          <div class="inner">
+            
+            <header><h2>1.5 性能扩展性评估</h2></header>
+            
+            
+            <section><ul>
+<li>
+<p>扩展性不足之处</p>
+<ul>
+<li>输入文件太多(这里有3000+个文件), input split过多, 需要的mapper就很多, 执行非常慢, 只能提前把数据集先进行合并(小文件合并为大文件), </li>
+</ul>
+</li>
+<li>
+<p>扩展性亮点</p>
+<ul>
+<li>func函数对Integer的处理</li>
+</ul>
+</li>
+<li>
+<p>性能评估</p>
+<ul>
+<li>单reducer和多reducer的性能比较</li>
+<li>通过算法提升性能的空间已经不大了</li>
+</ul>
+</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              17/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-18">
+          <div class="inner">
+            
+            <header><h2>需求2</h2></header>
+            
+            
+            <section><blockquote>
+<p>针对股票新闻数据集，以新闻标题中的词组为key，编写带URL属性的文档倒排索引程序，将结果输出到指定文件。</p>
+</blockquote>
+<ul>
+<li>说明<ul>
+<li>因为HDFS并不适合存储大量小文件，而且处理效率很低，所以处理合并文件fulldata.txt</li>
+<li>文档名: 股票代码+股票名称.txt</li>
+</ul>
+</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              18/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-19">
+          <div class="inner">
+            
+            <header><h2>2.1 设计思路</h2></header>
+            
+            
+            <section><ul>
+<li>mapper<ul>
+<li>每一行，我们可以得到这些信息: code name date time news-title URL</li>
+<li>对新闻标题进行中文分词 并且 <strong>对单词去重</strong> -&gt; every term</li>
+<li>股票代码+股票名称+'.txt' -&gt; 文档名 -&gt; docid</li>
+<li>网页链接URL -&gt; payload</li>
+<li>output format: &lt; term, docid, payload &gt;</li>
+</ul>
+</li>
+<li>set key: &lt; term, docid &gt;  (好处：二级排序 reducer可以直接输出value 空间开销o(1))</li>
+<li>set partitioner: &lt; term &gt; </li>
+<li>reducer<ul>
+<li>reducer只是是 <strong>输出格式的处理</strong></li>
+<li>output format: (term:docid#payload,docid#payload...)</li>
+<li>所有行按term排序，每一行内按docid排序</li>
+<li>(如果我们需要payload也是排序的, 只要 set key: &lt; term, docid, payload &gt;)</li>
+</ul>
+</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              19/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-20">
+          <div class="inner">
+            
+            <header><h1>2.2 细节和问题</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              20/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-21">
+          <div class="inner">
+            
+            <header><h2>2.2.1 reducer</h2></header>
+            
+            
+            <section><p>空间(内存)上进行了优化, 内存只需要存储:一个term + 一个docid + 一个payload</p>
+<ul>
+<li>读每一行:<ul>
+<li>如果遇到一个新的单词： 输出'\n'换行(不是第一个单词时), 并输出'term:docid#payload'</li>
+<li>否则：输出 ',docid#payload'</li>
+</ul>
+</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              21/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-22">
+          <div class="inner">
+            
+            <header><h2>2.2.2 reducer 的数量</h2></header>
+            
+            
+            <section><p>在上传到github上时，因为输出文件大于100M，上传被拒绝</p>
+<p>设置reducer的数量为两个，成功上传！(虽然警告超过了建议的大小50M)</p>
+<p>所以可以设置reducer的数量为三个</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              22/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-23">
+          <div class="inner">
+            
+            <header><h2>2.3 运行命令</h2></header>
+            
+            
+            <section><p>./run.sh</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              23/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-24">
+          <div class="inner">
+            
+            <header><h2>2.4 运行结果展示</h2></header>
+            
+            
+            <section><p><img alt="" src="file://D:\py_env\ppt\input\./img/ii_out1.png" /></p>
+<p><img alt="" src="file://D:\py_env\ppt\input\./img/ii_out2.png" /></p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              24/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: input\proj1-report.md -->
+      <div class="slide-wrapper">
+        <div class="slide slide-25">
+          <div class="inner">
+            
+            <header><h2>2.5 性能扩展性评估</h2></header>
+            
+            
+            <section><ol>
+<li>
+<p>一个思考</p>
+<p>原始数据大约20M, 生成的倒排索引文件大约103M, 空间大了非常多</p>
+<p>原因是: </p>
+<pre><code>(1) 原来一句话对应一个url, 现在一句话的每一个词语都要对应这个url, 空间开销大了很多; 
+(2) 存放了很多docid, 其实在这个应用中docid没有实际意义, 主要是为了编程练习
+</code></pre>
+<p>考虑的解决方案</p>
+<pre><code>(1) 增加完善停词表: 目前结果中有很多词语没有意义, 可以过滤
+</code></pre>
+</li>
+</ol></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="input\proj1-report.md">input\proj1-report.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              25/25
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <div id="toc" class="sidebar hidden">
+    <h2>Table of Contents</h2>
+    <table>
+      <caption>Table of Contents</caption>
+      
+      <tr id="toc-row-1">
+        <th><a href="#slide1">Project 1</a></th>
+        <td><a href="#slide1">1</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-2">
+        <th><a href="#slide2">@Author: huhu</a></th>
+        <td><a href="#slide2">2</a></td>
+      </tr>
+      
+        
+        <tr id="toc-row-3" class="sub">
+          <th><a href="#slide3">需求1</a></th>
+          <td><a href="#slide3">3</a></td>
+        </tr>
+        
+      
+      
+      <tr id="toc-row-4">
+        <th><a href="#slide4">1.1 设计思路</a></th>
+        <td><a href="#slide4">4</a></td>
+      </tr>
+      
+        
+        <tr id="toc-row-5" class="sub">
+          <th><a href="#slide5">1.1.1 first job:</a></th>
+          <td><a href="#slide5">5</a></td>
+        </tr>
+        
+        <tr id="toc-row-6" class="sub">
+          <th><a href="#slide6">1.1.2 second job:</a></th>
+          <td><a href="#slide6">6</a></td>
+        </tr>
+        
+        <tr id="toc-row-7" class="sub">
+          <th><a href="#slide7">1.1.3 * func 函数 ！</a></th>
+          <td><a href="#slide7">7</a></td>
+        </tr>
+        
+      
+      
+      <tr id="toc-row-8">
+        <th><a href="#slide8">1.2 细节与问题</a></th>
+        <td><a href="#slide8">8</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-9">
+        <th><a href="#slide9">1.2.1 词频统计 —— 提取文本: 新闻标题</a></th>
+        <td><a href="#slide9">9</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-10">
+        <th><a href="#slide10">1.2.1 词频统计 —— 提取文本: 新闻标题</a></th>
+        <td><a href="#slide10">10</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-11">
+        <th><a href="#slide11">1.2.1 词频统计 —— 提取文本: 新闻标题</a></th>
+        <td><a href="#slide11">11</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-12">
+        <th><a href="#slide12">1.2.2 中文分词</a></th>
+        <td><a href="#slide12">12</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-13">
+        <th><a href="#slide13">1.2.3 参数-k</a></th>
+        <td><a href="#slide13">13</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-14">
+        <th><a href="#slide14">1.2.4 全局排序</a></th>
+        <td><a href="#slide14">14</a></td>
+      </tr>
+      
+        
+        <tr id="toc-row-15" class="sub">
+          <th><a href="#slide15">1.3 运行命令</a></th>
+          <td><a href="#slide15">15</a></td>
+        </tr>
+        
+        <tr id="toc-row-16" class="sub">
+          <th><a href="#slide16">1.4 运行结果展示</a></th>
+          <td><a href="#slide16">16</a></td>
+        </tr>
+        
+        <tr id="toc-row-17" class="sub">
+          <th><a href="#slide17">1.5 性能扩展性评估</a></th>
+          <td><a href="#slide17">17</a></td>
+        </tr>
+        
+        <tr id="toc-row-18" class="sub">
+          <th><a href="#slide18">需求2</a></th>
+          <td><a href="#slide18">18</a></td>
+        </tr>
+        
+        <tr id="toc-row-19" class="sub">
+          <th><a href="#slide19">2.1 设计思路</a></th>
+          <td><a href="#slide19">19</a></td>
+        </tr>
+        
+      
+      
+      <tr id="toc-row-20">
+        <th><a href="#slide20">2.2 细节和问题</a></th>
+        <td><a href="#slide20">20</a></td>
+      </tr>
+      
+        
+        <tr id="toc-row-21" class="sub">
+          <th><a href="#slide21">2.2.1 reducer</a></th>
+          <td><a href="#slide21">21</a></td>
+        </tr>
+        
+        <tr id="toc-row-22" class="sub">
+          <th><a href="#slide22">2.2.2 reducer 的数量</a></th>
+          <td><a href="#slide22">22</a></td>
+        </tr>
+        
+        <tr id="toc-row-23" class="sub">
+          <th><a href="#slide23">2.3 运行命令</a></th>
+          <td><a href="#slide23">23</a></td>
+        </tr>
+        
+        <tr id="toc-row-24" class="sub">
+          <th><a href="#slide24">2.4 运行结果展示</a></th>
+          <td><a href="#slide24">24</a></td>
+        </tr>
+        
+        <tr id="toc-row-25" class="sub">
+          <th><a href="#slide25">2.5 性能扩展性评估</a></th>
+          <td><a href="#slide25">25</a></td>
+        </tr>
+        
+      
+      
+    </table>
+  </div>
+  
+  <div id="help" class="sidebar hidden">
+    <h2>Help</h2>
+    <table>
+      <caption>Help</caption>
+      <tr>
+        <th>Table of Contents</th>
+        <td>t</td>
+      </tr>
+      <tr>
+        <th>Exposé</th>
+        <td>ESC</td>
+      </tr>
+      <tr>
+        <th>Full screen slides</th>
+        <td>e</td>
+      </tr>
+      <tr>
+        <th>Presenter View</th>
+        <td>p</td>
+      </tr>
+      <tr>
+        <th>Source Files</th>
+        <td>s</td>
+      </tr>
+      <tr>
+        <th>Slide Numbers</th>
+        <td>n</td>
+      </tr>
+      <tr>
+        <th>Toggle screen blanking</th>
+        <td>b</td>
+      </tr>
+      <tr>
+        <th>Show/hide slide context</th>
+        <td>c</td>
+      </tr>
+      <tr>
+        <th>Notes</th>
+        <td>2</td>
+      </tr>
+      <tr>
+        <th>Help</th>
+        <td>h</td>
+      </tr>
+    </table>
+  </div>
+  <script>main()</script>
+</body>
+</html>
