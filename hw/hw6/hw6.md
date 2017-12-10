@@ -70,7 +70,7 @@ export JAVA_HOME=${your_java_home}
 jps
 ```
 
-![jps-1.png](./hbase_img/jps-1.png)
+![jps-1.png](./img/jps-1.png)
 
 ---
 
@@ -111,11 +111,11 @@ jps
 jps
 ```
 
-![jps-2.png](./hbase_img/jps-2.png)
+![jps-2.png](./img/jps-2.png)
 
 查看 hdfs 
 
-![hbase-dir.png](./hbase_img/hbase-dir.png)
+![hbase-dir.png](./img/hbase-dir.png)
 
 ---
 
@@ -131,7 +131,7 @@ jps
 ./bin/start-hbase.sh
 ```
 
-![start-sh](./hbase_img/start-sh.png)
+![start-sh](./img/start-sh.png)
 
 - 使用 hbase shell
 
@@ -139,7 +139,7 @@ jps
 hbase shell
 ```
 
-![hb-shell.png](./hbase_img/hb-shell.png)
+![hb-shell.png](./img/hb-shell.png)
 
 ---
 
@@ -149,32 +149,32 @@ hbase shell
 
     - create 命令
 
-![create](./hbase_img/sh-cre.png)
+![create](./img/sh-cre.png)
 
 - 添加数据
 
     - put 命令
 
-![put](./hbase_img/sh-put.png)
+![put](./img/sh-put.png)
 
 - 查看数据
 
     - scan 命令
 
-![scan](./hbase_img/sh-scan.png)
+![scan](./img/sh-scan.png)
 
 - 获取一行
 
     - get 命令
 
-![get](./hbase_img/sh-get.png)
+![get](./img/sh-get.png)
 
 - 删除数据表
 
     - 先 disable 
     - 才能 drop
 
-![drop](./hbase_img/sh-drop.png)
+![drop](./img/sh-drop.png)
 
 
 ---
@@ -311,7 +311,7 @@ Java 编程创建 Studens 表
 
 - 查看创建结果
 
-![java-out](./hbase_img/java-out.png)
+![java-out](./img/java-out.png)
 
 ---
 
@@ -329,7 +329,7 @@ Python 编程创建 Studens 表
 jps
 ```
 
-![jps-3.png](./hbase_img/jps-3.png)
+![jps-3.png](./img/jps-3.png)
 
 - 使用 happybase
 
@@ -382,7 +382,7 @@ for k, vals in table.scan():
 
 - 查看创建结果
 
-![python-out](./hbase_img/py-out.png)
+![python-out](./img/py-out.png)
 
 ---
 
