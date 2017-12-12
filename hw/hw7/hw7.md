@@ -79,7 +79,7 @@ $HIVE_HOME/bin/hive
 
 ##### 1.5 存在问题
 
-内部表从 HDFS 上装载数据时， ** 数据发生移动 ** 
+内部表从 HDFS 上装载数据时， **数据发生移动** 
 
 ![](./img/hdfs_remove.png)
 
