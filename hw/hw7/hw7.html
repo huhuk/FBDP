@@ -1193,50 +1193,50 @@ hdfs dfs -chmod <span class="m">777</span> /user/hive/warehouse
 <hr />
 <h4 id="1-hdfs"><a name="user-content-1-hdfs" href="#1-hdfs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1 从 HDFS 装载数据</h4>
 <h5 id="11-project1-wordcount"><a name="user-content-11-project1-wordcount" href="#11-project1-wordcount" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.1 运行 project1 wordcount 程序 得到 统计结果</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/hdfs_out.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/hdfs_out.png" /></p>
 <h5 id="12"><a name="user-content-12" href="#12" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.2 创建内部数据表</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/news_cre.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/news_cre.png" /></p>
 <h5 id="13-hfds"><a name="user-content-13-hfds" href="#13-hfds" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.3 从 HFDS 装载数据</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/news_load.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/news_load.png" /></p>
 <h5 id="14"><a name="user-content-14" href="#14" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.4 查询</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/news_sel.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/news_sel.png" /></p>
 <h5 id="15"><a name="user-content-15" href="#15" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1.5 存在问题</h5>
-<p>内部表从 HDFS 上装载数据时，<strong> 数据发生移动 </strong> </p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/hdfs_remove.png" /></p>
+<p>内部表从 HDFS 上装载数据时， <strong> 数据发生移动 </strong> </p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/hdfs_remove.png" /></p>
 <p>当删除数据表后，实际数据将丢失</p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/news_drop.png" /></p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/news_drop_hdfs.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/news_drop.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/news_drop_hdfs.png" /></p>
 <hr />
 <h4 id="2"><a name="user-content-2" href="#2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2 从 本地 装载数据</h4>
 <h5 id="21-hdfs"><a name="user-content-21-hdfs" href="#21-hdfs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.1 从 HDFS 获取输出 到 本地</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/hdfs_get.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/hdfs_get.png" /></p>
 <h5 id="22"><a name="user-content-22" href="#22" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.2 创建内部数据表</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/loc_cre.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/loc_cre.png" /></p>
 <h5 id="23"><a name="user-content-23" href="#23" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.3 从本地装载数据</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/loc_load.png" /></p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/loc_load_2.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/loc_load.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/loc_load_2.png" /></p>
 <h5 id="24"><a name="user-content-24" href="#24" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.4 查询</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/loc_sel.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/loc_sel.png" /></p>
 <h5 id="25"><a name="user-content-25" href="#25" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>2.5 存在问题</h5>
 <p>虽然从本地数据创建内部表时，删除数据表后， HDFS 上的数据被删除，本地的数据保留。</p>
-<p>但是 <strong> 实际应用场景中，文件一般比较大，</strong> 会存放在 HDFS 上而不是本地</p>
+<p>但是  <strong>实际应用场景中，文件一般比较大</strong>，会存放在 HDFS 上而不是本地</p>
 <hr />
 <h4 id="3"><a name="user-content-3" href="#3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3 创建外部表</h4>
-<p>( 使用 proj1 <strong> 排序后 </strong> 的输出 )</p>
+<p>( 使用 proj1 <strong>排序后</strong> 的输出 )</p>
 <h5 id="31"><a name="user-content-31" href="#31" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3.1 创建外部表</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_cre.png" /></p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_cre_2.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_cre.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_cre_2.png" /></p>
 <h5 id="32-hfds"><a name="user-content-32-hfds" href="#32-hfds" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3.2 装载 ( HFDS )</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_load.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_load.png" /></p>
 <h5 id="33"><a name="user-content-33" href="#33" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3.3 查询</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_sel.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_sel.png" /></p>
 <h5 id="34"><a name="user-content-34" href="#34" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>3.4 删除外部表 ( 实际数据不删除 )</h5>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_drop.png" /></p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/ex_drop_file.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_drop.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/ex_drop_file.png" /></p>
 <hr />
 <h4 id="4"><a name="user-content-4" href="#4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4 排序</h4>
 <p>如果使用 newsword (未排序) 数据表, 查询加排序</p>
-<p><img alt="" src="///C://Users/%7Ehuhu/Desktop/workspace/img/orderby.png" /></p>
+<p><img alt="" src="///D://1/major/FBDP/FBDP/hw/hw7/img/orderby.png" /></p>
 <p>会看到起了一个 mapreduce 任务来完成排序，也印证了 Hive 基于 mapreduce 执行一些操作</p>
 <p>不过速度很慢，时效性差</p>
 <p>改进：可以使用已经排好序的数据，不需要每次开启一个新的 mapreduce 任务来完成排序，效率更高</p>
