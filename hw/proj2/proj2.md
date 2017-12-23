@@ -256,9 +256,9 @@ np.mean(ans5[:, 0].astype(np.int) == ans5[:, 1].astype(np.int))
 
 决策树模型预测效率很高
 
-### 3.4 KNN - MapReduce
+### 3.5 KNN - MapReduce
 
-- 3.4.1 读取模型
+- 3.5.1 读取模型
     + 先使用 pyspark 训练模型 并序列化到本地磁盘
     + 反序列化从本地磁盘读取模型
 
@@ -277,7 +277,7 @@ n = x_train.shape[0]
 one = sp.sparse.csr_matrix(np.ones(n).reshape((n,1)))
 ```
 
-- 3.4.2 稀疏矩阵的距离计算
+- 3.5.2 稀疏矩阵的距离计算
 
 ```python
 def get_dist(x):
@@ -285,7 +285,7 @@ def get_dist(x):
     return sorted(zip(dists, y_train))[:k]
 ```
 
-- 3.4.3 K个近邻投票
+- 3.5.3 K个近邻投票
     + 选择得票最多的
     + 得票相同选择最近的
 
@@ -307,7 +307,7 @@ def get_cl(x):
     return ret
 ```
 
-- 3.4.4 效率和准确度
+- 3.5.4 效率和准确度
 
 ![](./img/knn_mr.png)
 
