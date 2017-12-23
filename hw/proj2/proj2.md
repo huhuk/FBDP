@@ -4,9 +4,9 @@
 
 ## author:  huhu
 
-## 数据预处理
+## 1 数据预处理
 
-### 聚合数据
+### 1.1 聚合数据
 
 ```bash
 cat positive/* > positive.txt
@@ -14,7 +14,7 @@ cat neutral/* > neutral.txt
 cat negative/* > negative.txt
 ```
 
-### 打类别标签
+### 1.2 打类别标签
 
 ```bash
 C1='./positive.txt'
@@ -26,9 +26,9 @@ awk '{print "2", $0}' ${C2} >> ${target}
 awk '{print "3", $0}' ${C3} >> ${target}
 ```
 
-### 数据清洗
+### 1.3 数据清洗
 
-#### 数据样例
+#### 1.3.1 数据样例
 
 - 原始数据
 
@@ -50,7 +50,7 @@ def get_text(text):
 
 > 1  华股 财经 民航局 空军 合用 机场 试点 航空 股 黄金时代 开启 机构 晨会 川大 智胜 季报 营收 增长 业绩 符合 预期 公司 实现 营业 收入 约 万元 同比 增 营业 利润 万元 同比 减 归属于 上市公司 股东 净利润 万元 同比 增 每股 收益 元 值得一提的是 公司 迎合 军民 融合 潮流 锐意 革新 技术 英特尔 信息技术 峰会 更是 首度 推出 首款 三维 人脸识别 产品 产品 公司 自主 研发 高精度 三维 人脸 相机 建模 识别 英特尔 新 推出 摄像头 三维 人脸 数据 采集 相结合 目前 公司 正 加大 三维 人脸识别 产业化 市场 拓展 业内 预计 成为 公司 新 利润 增长点'
 
-#### pyspark
+#### 1.3.2 pyspark
 
 ```python
 sc = pyspark.SparkContext(appName='preprocess')
@@ -64,7 +64,7 @@ data = text.map( lambda _: ( _[:2], get_text(_[2:] ) ) ).collect()
 
 **其实这里没必要进行 action 操作（因为 transform 过程还没有全部完成），只是为了对比一下效率**
 
-#### Hadoop
+#### 1.3.3 Hadoop
 
 ```bash
 ${HADOOP_BIN}"hadoop" jar $STREAM_JAR_PATH \
@@ -88,9 +88,7 @@ for line in sys.stdin:
 
 Spark 效率 优于 Hadoop
 
----
-
-### 划分数据集
+### 1.4 划分数据集
 
 ```python
 data = text.map(lambda _: (_[:2], get_text(_[2:])) ).randomSplit((0.7, 0.3))
@@ -103,9 +101,9 @@ y_train = train.map(lambda x: x[0]).collect()
 
 ![](./img/par_2.png)
 
-## 特征提取
+## 2 特征提取
 
-- TF-IDF
+- 2.1 TF-IDF
 
   将文本转换为 TF-IDF **特征向量**
 
@@ -116,7 +114,7 @@ count_vec = TfidfVectorizer(binary = False)
 x_train = count_vec.fit_transform(x_train)
 ```
 
-- 词频
+- 2.2 词频
 
   将文本转换为 词频 **特征向量**
 
@@ -128,9 +126,9 @@ tr1_x = tmp.fit_transform(tr1.map(lambda x: x[1]).collect())
 ts1_x = tmp.transform(ts1.map(lambda x: x[1]).collect())
 ```
 
-## 模型训练
+## 3 模型训练
 
-### SVM
+### 3.1 SVM
 
 - 训练
 
@@ -156,9 +154,7 @@ np.mean(ans[:, 0].astype(np.int) == ans[:, 1].astype(np.int))
 
 SVM 性能最好
 
----
-
-### KNN
+### 3.2 KNN
 
 - 训练
 
@@ -208,9 +204,7 @@ np.mean(y_pred == y_test)
 
 比较不同的k，发现k比较小的时候，效果更好
 
----
-
-### 朴素贝叶斯
+### 3.3 朴素贝叶斯
 
 - 训练
 
@@ -234,9 +228,7 @@ np.mean(ans4[:, 0].astype(np.int) == ans4[:, 1].astype(np.int))
 
 ![](./img/ans_nb.png)
 
----
-
-### 决策树
+### 3.4 决策树
 
 - 训练
 
@@ -264,11 +256,9 @@ np.mean(ans5[:, 0].astype(np.int) == ans5[:, 1].astype(np.int))
 
 决策树模型预测效率很高
 
----
+### 3.4 KNN - MapReduce
 
-### KNN - MapReduce
-
-- 读取模型
+- 3.4.1 读取模型
     + 先使用 pyspark 训练模型 并序列化到本地磁盘
     + 反序列化从本地磁盘读取模型
 
@@ -287,7 +277,7 @@ n = x_train.shape[0]
 one = sp.sparse.csr_matrix(np.ones(n).reshape((n,1)))
 ```
 
-- 稀疏矩阵的距离计算
+- 3.4.2 稀疏矩阵的距离计算
 
 ```python
 def get_dist(x):
@@ -295,7 +285,7 @@ def get_dist(x):
     return sorted(zip(dists, y_train))[:k]
 ```
 
-- K个近邻投票
+- 3.4.3 K个近邻投票
     + 选择得票最多的
     + 得票相同选择最近的
 
@@ -317,7 +307,7 @@ def get_cl(x):
     return ret
 ```
 
-#### 效率和准确度
+- 3.4.4 效率和准确度
 
 ![](./img/knn_mr.png)
 
@@ -326,5 +316,3 @@ def get_cl(x):
 mapreduce 效率上**差于** pyspark
 
 这里的准确率**优于**之前直接使用的默认的KNN，表明这种邻居选择策略还不错
-
----
