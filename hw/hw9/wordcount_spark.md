@@ -135,7 +135,12 @@ ans.saveAsTextFile('file:///home/huhu/output')
 > The entry point into all functionality in Spark is the SparkSession class. To create a basic SparkSession, just use SparkSession.builder:
 
 ```python
-from pyspark.sql.types import StructField, StructType, StringType, IntegerType
+from pyspark.sql import SparkSession
+spark = SparkSession \
+          .builder \
+          .appName("Python Spark SQL basic example") \
+          .config("spark.some.config.option", "some-value") \
+          .getOrCreate()
 ```
 
 - 3.2 从 RDD 创建 DataFrame
@@ -147,6 +152,7 @@ from pyspark.sql.types import StructField, StructType, StringType, IntegerType
 > Step 2. Create the schema represented by a StructType matching the structure of tuples or lists in the RDD created in the step 1.
 
 ```python
+from pyspark.sql.types import StructField, StructType, StringType, IntegerType
 fields = [StructField('count', IntegerType(), True), StructField('word', StringType(), True)]
 schema = StructType(fields)
 ```
