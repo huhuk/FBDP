@@ -36,6 +36,8 @@
 
 
 
+
+
 ## 2. 云计算按照服务层面分类，可以分为哪三类？简述每一类的作用和特点。
 
 按云计算服务层面进行分类：基础设施即服务（IaaS）、平台即服务（PaaS）和软件即服务（SaaS），三者从通用到专用递进。
@@ -48,7 +50,7 @@
 
    例如：Amazon EC2/S3
 
-   Amazon EC2提供了一种IaaS类型的云计算服务平台，在该平台上用户可部署自己的系统软件，完成应用软件的开发和发布。
+    Amazon EC2提供了一种IaaS类型的云计算服务平台，在该平台上用户可部署自己的系统软件，完成应用软件的开发和发布。
 
 2. 将平台作为服务 PaaS（Platform as a Service）
 
@@ -58,7 +60,7 @@
 
    例如：Google App Engine, Microsoft Windows Azure
 
-   Google App Engine 提供了一种PaaS类型的云计算服务平台，用户可租用该平台的计算资源，并使用App Engine 提供的各种应用开发和支撑软件平台开发和部署自己的应用软件
+    Google App Engine 提供了一种PaaS类型的云计算服务平台，用户可租用该平台的计算资源，并使用App Engine 提供的各种应用开发和支撑软件平台开发和部署自己的应用软件
 
 3. 将软件作为服务 SaaS（Software as a Service）
 
