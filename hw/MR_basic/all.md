@@ -3,8 +3,6 @@
 
 # 作业4
 
-* ###### 学号： 151278002
-* ###### 姓名： 曾沁杉
 * ###### 说明
     hadoop streaming 框架 用 stdin 和 stdout 的方式支持多种语言 这种方式方便本地调试
 
@@ -19,7 +17,7 @@
 > 
 > $ jar cf wc.jar WordCount*.class
 
-![](./wc_all_files.png)
+![](./img/wc_all_files.png)
 
 * ##### Input
 > $ hdfs dfs -ls wordcount/input
@@ -38,7 +36,7 @@
 * ##### Skip patterns
 > $ hdfs dfs -cat wordcount/patterns.txt
 
-![](./wc_p.png)
+![](./img/wc_p.png)
 
 * ##### Run the application
 > $ hadoop jar wc.jar WordCount2 wordcount/input wordcount/output –skip wordcount/patterns.txt
@@ -195,7 +193,7 @@ public class WordCount2 {
 
 * ##### 目录结构
 
-![](m_ls.png)
+![](./img/m_ls.png)
 
 * ##### Input
 
@@ -207,7 +205,7 @@ public class WordCount2 {
 
 （这是对 **矩阵** 表示的 **数据结构** 的定义，所以 **输出的矩阵** 也按这个 **数据结构** 要求） 
 
-![](m_input.png)
+![](./img/m_input.png)
 
 * ##### Run the application
 > ./run.sh < row > < column >
@@ -226,7 +224,7 @@ public class WordCount2 {
 
 （已经过检查校对）
 
-![](m_output.png)
+![](./img/m_output.png)
 
 * ##### 程序算法说明
 
@@ -348,11 +346,11 @@ if cell != 0:
 
 * ##### Run the application
 
-![](./m_j_r.png)
+![](./img/m_j_r.png)
 
 * ##### Output
 
-![](./m_j_o.png)
+![](./img/m_j_o.png)
 
 * ##### Src code
 
@@ -510,13 +508,13 @@ public class MatrixMultiply {
 
 * ### 目录结构
 
-![](./ra_dir.png)
+![](./img/ra_dir.png)
 
 * ### selection
 
 * ##### Input
 
-![](./ra_s_i.png)
+![](./img/ra_s_i.png)
 
 * ##### Run the application
 > ./run.sh < col > < value >
@@ -525,7 +523,7 @@ public class MatrixMultiply {
 
 * ##### Output
 
-![](./ra_s_o.png)
+![](./img/ra_s_o.png)
 
 * ##### run.sh
 ```bash
@@ -566,7 +564,7 @@ for line in sys.stdin:
 
 * ##### Input
 
-![](./ra_p_i.png)
+![](./img/ra_p_i.png)
 
 * ##### Run the application
 > ./run.sh < col >
@@ -575,7 +573,7 @@ for line in sys.stdin:
 
 * ##### Output
 
-![](./ra_p_o.png)
+![](./img/ra_p_o.png)
 
 * ##### run.sh
 ```bash
@@ -613,14 +611,14 @@ for line in sys.stdin:
 
 * ##### Input
 
-![](./ra_i_i.png)
+![](./img/ra_i_i.png)
 
 * ##### Run the application
 > ./run.sh
 
 * ##### Output
 
-![](./ra_i_o.png)
+![](./img/ra_i_o.png)
 
 * ##### run.sh
 ```bash
@@ -666,7 +664,7 @@ for line in sys.stdin:
 
 * ##### Input
 
-![](./ra_d_i.png)
+![](./img/ra_d_i.png)
 
 * ##### Run the application
 > ./run.sh < relationA/fileA >
@@ -675,7 +673,7 @@ for line in sys.stdin:
 
 * ##### Output
 
-![](./ra_d_o.png)
+![](./img/ra_d_o.png)
 
 * ##### run.sh
 ```bash
@@ -748,7 +746,7 @@ if val == 1:
 
 * ##### Input
 
-![](./ra_n_i.png)
+![](./img/ra_n_i.png)
 
 * ##### Run the application
 > ./run.sh < col > < relationA/fileA >
@@ -757,7 +755,7 @@ if val == 1:
 
 * ##### Output
 
-![](./ra_n_o.png)
+![](./img/ra_n_o.png)
 
 * ##### run.sh
 ```bash
